@@ -1,0 +1,107 @@
+---
+title: "Healthcare Cost Disparities in Gender, Age, Smokers, and Heart Disease"
+subtitle: "HRP 203"
+author: "Tierra Mosher, MD"
+date: "06-01-2026"
+format: 
+  pdf: 
+    geometry:
+      - top=30mm
+      - left=20mm
+      - heightrounded
+    mainfont: Times New Roman
+    colorlinks: true
+    fig-pos: "H"
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+---
+
+## Introduction
+
+In our tenuous political and economic climate, costs matter exponentially more. One area of costs that is possibly modifiable is healthcare costs. There are known disparities in healthcare costs among different groups of people. Some of the most important examples of this are the annual healthcare cost disparities between men vs women, younger vs older individuals, smokers vs nonsmokers, and those with vs without cardiac disease.
+
+Men are suspected to pay more annually on food and personal transportation and are more likely to have higher auto and life insurance policies than women. Alternatively, the cost of being a woman is thought to be driven by the ‘pink tax', which is caused by foundational differences in biological expenses, such as feminine hygiene, i.e. menstrual care. The gender wage gap contributes to this as well, accounting for women earning \~ 80 cents for every dollar a man makes. The average out of pocket healthcare costs associated with aging are more than \$12,000 annually for those older than 65 years and those costs double for Americans over 85 years old. While biology keeps the score for some cost disparities, lifestyle choices heavily influence others. Smoking and cardiac disease are examples of this.
+
+Exposure to the toxic chemicals in tobacco smoke increases risk of chronic obstructive pulmonary disease (COPD), lung cancer, stroke, peripheral artery disease, and premature aging. This is associated with direct healthcare costs, lost productivity, opportunity costs, and increased insurance premiums. Finally, although there are genetic predispositions to cardiovascular disease, it is also associated with poor lifestyle choices. These choices come at a cost, with coronary artery disease generating \~\$13,000 annually of additional health care costs, heart failure adding \$18,000, and stroke adding \~\$35,000.
+
+The purpose of this study is to analyze the impact of differences in gender, age, smoking status, and presence vs absence of cardiac disease on annual healthcare costs within a simulated cohort.
+
+## Methods
+
+This study represents a retrospective simulated cohort analysis performed to evaluate 5000 study participants with information provided regarding their gender, age, smoking status, cardiac disease status, and their annual healthcare spending costs in the year 2020.
+
+Descriptive statistics summarizing patient variable characteristics were assessed to include the minimum, maximum, median, and mean values of each variable. This was followed by a gaussian multiple linear regression analysis used to test if gender, age, smoking status, and cardiac disease status significantly predicted healthcare spending costs in the year 2020 in this simulated cohort, such that:
+
+1.  $y(Cost) = x0 + x1(Smoke) + x2(Age) + x3(Female) + x4(Cardiac)$
+
+Where ‘y’ represents annual healthcare spending costs in United States Dollars (USD); 'x~1~' represents gender where 0 is male, and 1 is female, 'x~2~' represents age in years, 'x~3~' represents smoking status where 0 represents non-smoker and 1 represents smoker; and 'x~4~' represents cardiac disease status where 0 represents no cardiac disease and 1 represents cardiac disease. This analysis was then plotted on a line of to evaluate the directional effect of each variable on healthcare spending costs.
+
+## Results
+
+#### Cohort Characteristics
+
+Summary characteristics of our simulated cohort reveal that 13% of the simulated cohort were smokers, 57% were female, the median age of patients in the cohort was 45 years with a minimum age of 31 years and a maximum age of 59 years, and 5.5% presented with cardiac disease. The median healthcare spending costs were \$9,376 with minimum spend of \$9,090 and maximum spend of \$9,676 in the year 2020. These findings are further described below in Table 1.
+
+##### Table 1. Simulated Cohort Characteristics: Data Summary
+
+```{r}
+
+cohort <- read.csv("cohort.csv")
+install.packages("gtsummary")
+library(gtsummary)
+
+#############1: Table Describing Variables#############
+tbl_summary(cohort)
+
+```
+
+#### Linear Regression of Simulated Cohort
+
+The overall regression was statistically significant (p\<0.001, Table 2). It was found that all evaluated variables (smoking status, female gender, age, and cardiac disease status) significantly predicted annual healthcare spending cost (beta = 509, -269, 17, and 523, respectively; Table 2). Figures 1 through 4 highlight the predicted trajectory of costs based on each variable of the regression model. Figure 1 highlights a positive relationship between annual healthcare costs and smoking status. Figure 2 highlights a negative relationship between annual healthcare costs and female gender. Figure 3 highlights a positive relationship between annual healthcare costs and age in years. Figure 4 highlights a positive relationship between annual healthcare costs and cardiac disease presence.
+
+##### Table 2. Model Regression
+
+```{r}
+
+cohort <- read.csv("cohort.csv")
+install.packages("gtsummary")
+library(gtsummary)
+
+#############2: Linear Regression#############
+
+my_model <- glm(cost ~., smoke + age + female + cardiac,
+    family = gaussian, 
+    data = cohort)
+
+tbl_regression(my_model)
+
+```
+
+```{r}
+#| label: fig-plots
+#| out-width: "50%"
+#| fig-align: "center"
+#| fig-ncol: 2
+#| fig-nrow: 2
+#| fig-pos: "h"
+
+my_model <- glm(cost ~., smoke + age + female + cardiac,
+    family = gaussian, 
+    data = cohort)
+
+install.packages("ggeffects")
+library(ggeffects)
+
+model_effects <- ggpredict(my_model)
+
+plot(model_effects)
+
+```
+
+##### Figures 1-4. Conditional Effects. Figures 1 through 4 highlight the predicted trajectory of costs based on each variable of the regression model. Figure 1 displays an uptrending line of best fit revealing positive relationship between annual healthcare costs and smoking status. Figure 2 displays a downtrending line of best fit revealing a negative relationship between annual healthcare costs and female gender. Figure 3 displays an uptrending line of best fit, revealing a positive relationship between annual healthcare costs and age in years. Figure 4 displays an uptrending line of best fit, revealing a positive relationship between annual healthcare costs and cardiac disease presence.
+
+## Discussion
+
+In this study evaluating whether gender, age, smoker status, and cardiac disease impact or predict annual healthcare costs, the findings are statistically significant across all variables (Table 2). This means that each variable had a statistically significant impact on annual healthcare spending costs. More plainly, being a smoker was associated with increased annual healthcare costs (Figure 1), being female was associated with reduced healthcare costs (Figure 2), being older was associated with higher annual healthcare costs (Figure 3), and having cardiac disease was associated with higher annual healthcare costs (Figure 4). These findings mostly support the overall statistics seen in the literature except in gender. Literature is more aligned with female gender being associated with more annual healthcare costs rather than less. The reason for this discrepancy between our dataset and the literature could be secondary to the female predominance in our simulated dataset at 57% although in real life there is a equal distribution of women vs men nationwide. Ultimately, these findings further advocate for lifestyle optimization to reduce annual healthcare spending costs. Although nothing more could be done about a person's increased risk based on age and gender, an argument could be made for future policy reform that better advocates for lifestyle modification to reduce annual healthcare spend through those characteristics that are modifiable.
+
+### I did not use generative AI to complete any portion of this assignment.
